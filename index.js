@@ -3,14 +3,14 @@ let totalAmount = 0;
 
 $(document).ready(function() {
 
-  // Navbar Adjustment
+  // 1. Navbar Mobile Adjustment
   if ($(document).width() <= 992) {
     $('.navbar-nav').removeClass("ml-auto").addClass("mr-auto");
   } else {
     $('.navbar-nav').removeClass("mr-auto").addClass("ml-auto");
   }
 
-  // Scroll to Top Logic
+  // 2. Scroll to Top Button Logic
   var scrollToTopBtn = $('#scrollToTop');
   $(window).scroll(function() {
     if ($(window).scrollTop() > 300) {
@@ -25,7 +25,7 @@ $(document).ready(function() {
     $('html, body').animate({ scrollTop: 0 }, '500');
   });
 
-  // Smooth Scrolling
+  // 3. Smooth Scrolling for Navigation
   $(".navbar a, .homeBtn").on('click', function(event) {
     if (this.hash !== "") {
       event.preventDefault();
@@ -38,7 +38,7 @@ $(document).ready(function() {
     }
   });
 
-  // Category Filtering
+  // 4. Category Filter (Momos / Chinese / Beverages)
   $('.product-box-layout4').click(function() {
     $(this).toggleClass("productClicked").parent().siblings('div').children().removeClass("productClicked");
     let targetId = "";
@@ -52,7 +52,7 @@ $(document).ready(function() {
     }
   });
 
-  // Menu Increment/Decrement
+  // 5. Cart Quantity Controls (Plus/Minus)
   $(".menuBtn").click(function() {
     let quantityLabel = $(this).siblings(".quantity");
     let foodName = quantityLabel.parent().siblings('div').children().first().text().trim();
@@ -69,8 +69,8 @@ $(document).ready(function() {
     updateCart(foodName, count, price);
   });
 
+  // 6. Update Cart UI & Calculation
   function updateCart(name, qty, price) {
-    // Find if item exists
     let index = food.findIndex(item => item[0] === name);
     
     if (index > -1) {
@@ -80,7 +80,6 @@ $(document).ready(function() {
       food.push([name, qty, price]);
     }
 
-    // UI Update
     let cartDiv = $('.cartContentDiv');
     cartDiv.empty();
     totalAmount = 0;
@@ -103,7 +102,7 @@ $(document).ready(function() {
       });
     } else {
       $('.shoppingCart').removeClass('shoppingCartWithItems');
-      cartDiv.append('<h1 class="text-muted">Your Cart is Empty</h1>');
+      cartDiv.append('<h1 class="text-muted text-center">Your Cart is Empty</h1>');
     }
 
     $('.shoppingCartAfter').text(food.length);
@@ -111,21 +110,22 @@ $(document).ready(function() {
   }
 });
 
-// FIXED WHATSAPP REDIRECT
+// 7. WhatsApp & GPay Integration
 function openWhatsapp() {
   let addressField = $('#address').val();
   let noteField = $('#note').val();
 
   if (!addressField) {
-    alert("Please Enter Address");
+    alert("Please Enter Delivery Address");
     return;
   }
   
   if (food.length === 0) {
-    alert("Your cart is empty!");
+    alert("Your cart is empty! Add some momos first.");
     return;
   }
 
+  // Formatting the WhatsApp Message
   let wTxt = '*New Order from Momo Agency*\n\n';
   wTxt += '*Item Name* - *Qty*\n';
   wTxt += '--------------------------\n';
@@ -137,10 +137,18 @@ function openWhatsapp() {
   });
 
   wTxt += `\n*Total Bill: ₹${finalTotal}*`;
+  
+  // GPAY / UPI Integration
+  // This link will prompt the user to pay the exact total to your UPI ID
+  let upiID = "7719077157@okicici"; // Update if different
+  let upiLink = `upi://pay?pa=${upiID}&pn=Momo%20Agency&am=${finalTotal}&cu=INR`;
+  
+  wTxt += `\n\n*Click to Pay via GPay/PhonePe:* \n${upiLink}`;
   wTxt += `\n\n*Delivery Address:* ${addressField}`;
   if (noteField) wTxt += `\n*Note:* ${noteField}`;
 
   let encodedMsg = encodeURIComponent(wTxt);
-  // YOUR NUMBER UPDATED HERE
+  
+  // Opens WhatsApp with your number
   window.open(`https://wa.me/917719077157?text=${encodedMsg}`, "_blank");
 }
