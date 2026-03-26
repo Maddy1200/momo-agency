@@ -200,7 +200,7 @@ function openWhatsapp() {
     }
 
     let wTxtEncoded = encodeURI(wTxt);
-    window.open("https://wa.me/919871198882?text=" + wTxtEncoded);
+    window.open("https://wa.me/917719077157?text=" + wTxtEncoded);
   }
 
 
